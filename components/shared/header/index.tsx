@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { MenuIcon } from "lucide-react";
 import Menu from "./menu";
 
-const index = () => {
+export default function Header() {
   return (
-    <header className='bg-black  text-white'>
+    <header className='bg-black text-white'>
       <section className='px-2'>
         <div className='flex items-center justify-between'>
           <div className='flex items-center'>
@@ -62,5 +62,4 @@ const index = () => {
       </section>
     </header>
   );
-};
-export default index;
+}

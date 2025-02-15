@@ -6,12 +6,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getAllCategories } from "@/lib/actions/product.actions";
 import { APP_NAME } from "@/lib/constants";
 import { SearchIcon } from "lucide-react";
 
-const CATEGORIES = ["men", "women", "kids", "accessories"];
+const Search = async () => {
+  const categories = await getAllCategories();
 
-const Search = () => {
   return (
     <form action='/search' method='GET' className='flex items-stretch h-10'>
       <Select name='category'>
@@ -22,7 +23,7 @@ const Search = () => {
         <SelectContent position='popper'>
           <SelectItem value='all'>All</SelectItem>
 
-          {CATEGORIES.map((category) => (
+          {categories.map((category) => (
             <SelectItem key={category} value={category}>
               {category}
             </SelectItem>

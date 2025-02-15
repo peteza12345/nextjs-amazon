@@ -46,6 +46,10 @@ export default function OrderPaymentForm({
   } = order;
   const { toast } = useToast();
 
+  const stripePromise = loadStripe(
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
+  );
+
   if (isPaid) {
     redirect(`/account/orders/${order._id}`);
   }
@@ -159,10 +163,6 @@ export default function OrderPaymentForm({
         </div>
       </CardContent>
     </Card>
-  );
-
-  const stripePromise = loadStripe(
-    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
   );
 
   return (

@@ -74,6 +74,9 @@ body {
 }
 
 @layer utilities {
+  .web-page-content p {
+    @apply py-2;
+  }
 
   .highlight-link a,
   a.highlight-link {

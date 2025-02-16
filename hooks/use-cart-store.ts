@@ -78,6 +78,7 @@ const useCartStore = create(
             x.color === item.color &&
             x.size === item.size
         );
+
         if (!foundItem) {
           throw new Error("Item not found in cart");
         }

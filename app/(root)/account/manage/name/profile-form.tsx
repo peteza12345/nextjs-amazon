@@ -23,13 +23,14 @@ import { UserNameSchema } from "@/lib/validator";
 export const ProfileForm = () => {
   const router = useRouter();
   const { data: session, update } = useSession();
+
   const form = useForm<z.infer<typeof UserNameSchema>>({
     resolver: zodResolver(UserNameSchema),
     defaultValues: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-      name: session?.user?.name!,
+      name: session?.user?.name ?? "",
     },
   });
+
   const { toast } = useToast();
 
   async function onSubmit(values: z.infer<typeof UserNameSchema>) {

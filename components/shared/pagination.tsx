@@ -5,6 +5,7 @@ import React from "react";
 import { formUrlQuery } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type PaginationProps = {
   page: number | string;
@@ -28,26 +29,28 @@ const Pagination = ({ page, totalPages, urlParamName }: PaginationProps) => {
     router.push(newUrl, { scroll: true });
   };
 
+  const t = useTranslations();
+
   return (
     <div className='flex items-center gap-2'>
       <Button
         size='lg'
         variant='outline'
-        className='w-28'
         onClick={() => onClick("prev")}
         disabled={Number(page) <= 1}
+        className='w-24'
       >
-        <ChevronLeft /> Previous
+        <ChevronLeft /> {t("Search.Previous")}
       </Button>
-      Page {page} of {totalPages}
+      {t("Search.Page")} {page} {t("Search.of")} {totalPages}
       <Button
         size='lg'
         variant='outline'
-        className='w-28'
         onClick={() => onClick("next")}
         disabled={Number(page) >= totalPages}
+        className='w-24'
       >
-        Next <ChevronRight />
+        {t("Search.Next")} <ChevronRight />
       </Button>
     </div>
   );

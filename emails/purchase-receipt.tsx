@@ -6,17 +6,16 @@ import {
   Heading,
   Html,
   Img,
+  Link,
   Preview,
   Row,
   Section,
   Tailwind,
   Text,
 } from "@react-email/components";
-
 import { formatCurrency } from "@/lib/utils";
 import { IOrder } from "@/lib/db/models/order.model";
-import { SERVER_URL } from "@/lib/constants";
-import Link from "next/link";
+import { getSetting } from "@/lib/actions/setting.actions";
 
 type OrderInformationProps = {
   order: IOrder;
@@ -62,12 +61,13 @@ PurchaseReceiptEmail.PreviewProps = {
     isDelivered: true,
   } as IOrder,
 } satisfies OrderInformationProps;
-
 const dateFormatter = new Intl.DateTimeFormat("en", { dateStyle: "medium" });
 
 export default async function PurchaseReceiptEmail({
   order,
 }: OrderInformationProps) {
+  const { site } = await getSetting();
+
   return (
     <Html>
       <Preview>View order receipt</Preview>
@@ -82,6 +82,7 @@ export default async function PurchaseReceiptEmail({
                   <Text className='mb-0 text-gray-500 whitespace-nowrap text-nowrap mr-4'>
                     Order ID
                   </Text>
+
                   <Text className='mt-0 mr-4'>{order._id.toString()}</Text>
                 </Column>
 
@@ -89,6 +90,7 @@ export default async function PurchaseReceiptEmail({
                   <Text className='mb-0 text-gray-500 whitespace-nowrap text-nowrap mr-4'>
                     Purchased On
                   </Text>
+
                   <Text className='mt-0 mr-4'>
                     {dateFormatter.format(order.createdAt)}
                   </Text>
@@ -98,6 +100,7 @@ export default async function PurchaseReceiptEmail({
                   <Text className='mb-0 text-gray-500 whitespace-nowrap text-nowrap mr-4'>
                     Price Paid
                   </Text>
+
                   <Text className='mt-0 mr-4'>
                     {formatCurrency(order.totalPrice)}
                   </Text>
@@ -109,14 +112,14 @@ export default async function PurchaseReceiptEmail({
               {order.items.map((item) => (
                 <Row key={item.product} className='mt-8'>
                   <Column className='w-20'>
-                    <Link href={`${SERVER_URL}/product/${item.slug}`}>
+                    <Link href={`${site.url}/product/${item.slug}`}>
                       <Img
                         width='80'
                         alt={item.name}
                         className='rounded'
                         src={
                           item.image.startsWith("/")
-                            ? `${SERVER_URL}${item.image}`
+                            ? `${site.url}${item.image}`
                             : item.image
                         }
                       />
@@ -124,7 +127,7 @@ export default async function PurchaseReceiptEmail({
                   </Column>
 
                   <Column className='align-top'>
-                    <Link href={`${SERVER_URL}/product/${item.slug}`}>
+                    <Link href={`${site.url}/product/${item.slug}`}>
                       <Text className='mx-2 my-0'>
                         {item.name} x {item.quantity}
                       </Text>

@@ -2,6 +2,8 @@
 
 import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
 import { auth } from "@/auth";
 
 import { connectToDatabase } from "../db";
@@ -9,14 +11,14 @@ import Product from "../db/models/product.model";
 import Review, { IReview } from "../db/models/review.model";
 import { formatError } from "../utils";
 import { ReviewInputSchema } from "../validator";
-import { IReviewDetails, IReviewInput } from "@/types";
-import { PAGE_SIZE } from "../constants";
+import { IReviewDetails } from "@/types";
+import { getSetting } from "./setting.actions";
 
 export async function createUpdateReview({
   data,
   path,
 }: {
-  data: IReviewInput;
+  data: z.infer<typeof ReviewInputSchema>;
   path: string;
 }) {
   try {
@@ -109,7 +111,10 @@ export async function getReviews({
   limit?: number;
   page: number;
 }) {
-  limit = limit || PAGE_SIZE;
+  const {
+    common: { pageSize },
+  } = await getSetting();
+  limit = limit || pageSize;
   await connectToDatabase();
   const skipAmount = (page - 1) * limit;
   const reviews = await Review.find({ product: productId })
@@ -119,30 +124,25 @@ export async function getReviews({
     })
     .skip(skipAmount)
     .limit(limit);
-
   const reviewsCount = await Review.countDocuments({ product: productId });
   return {
     data: JSON.parse(JSON.stringify(reviews)) as IReviewDetails[],
     totalPages: reviewsCount === 0 ? 1 : Math.ceil(reviewsCount / limit),
   };
 }
-
 export const getReviewByProductId = async ({
   productId,
 }: {
   productId: string;
 }) => {
   await connectToDatabase();
-
   const session = await auth();
   if (!session) {
     throw new Error("User is not authenticated");
   }
-
   const review = await Review.findOne({
     product: productId,
     user: session?.user?.id,
   });
-
   return review ? (JSON.parse(JSON.stringify(review)) as IReview) : null;
 };
